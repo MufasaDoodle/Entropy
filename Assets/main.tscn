@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://siwardv11rdn"]
+
+[ext_resource type="Texture2D" uid="uid://u3l1jfx6owae" path="res://icon.svg" id="1_hirma"]
+[ext_resource type="PackedScene" uid="uid://wr054008837e" path="res://UI_Scene.tscn" id="2_26ac6"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(940, 525)
+texture = ExtResource("1_hirma")
+
+[node name="CanvasLayer" parent="." instance=ExtResource("2_26ac6")]
