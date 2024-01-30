@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://wr054008837e"]
+[gd_scene load_steps=9 format=3 uid="uid://wr054008837e"]
 
 [ext_resource type="Texture2D" uid="uid://coqn6sm0tfepa" path="res://Assets/Icons/play-button.svg" id="1_othhy"]
 [ext_resource type="Script" path="res://Assets/Scripts/PauseButton.cs" id="1_p2rb8"]
+[ext_resource type="Script" path="res://Assets/Scripts/DatePanel.cs" id="1_v65ng"]
+[ext_resource type="Texture2D" uid="uid://cb7mtudbi8018" path="res://Assets/Icons/minus.png" id="4_gajxx"]
+[ext_resource type="Script" path="res://Assets/Scripts/SpeedControls.cs" id="4_gl1ce"]
+[ext_resource type="Texture2D" uid="uid://bgud775h6a4y3" path="res://Assets/Icons/plus-symbol-button.png" id="5_30dlf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_kkath"]
+font_size = 38
+
+[sub_resource type="LabelSettings" id="LabelSettings_aloew"]
+font_size = 22
 
 [node name="CanvasLayer" type="CanvasLayer"]
 
@@ -9,15 +19,43 @@
 offset_right = 1580.0
 offset_bottom = 100.0
 
-[node name="PausePanel" type="Panel" parent="."]
+[node name="TimePanels" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -109.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="DatePanel" type="Panel" parent="TimePanels"]
+offset_left = -295.0
+offset_right = -75.0
+offset_bottom = 100.0
+script = ExtResource("1_v65ng")
+
+[node name="DateLabel" type="Label" parent="TimePanels/DatePanel"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 9.0
+offset_right = 211.0
+offset_bottom = 90.0
+text = "Ticks: xxxx"
+label_settings = SubResource("LabelSettings_kkath")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PausePanel" type="Panel" parent="TimePanels"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -110.0
+offset_right = -1.0
 offset_bottom = 109.0
 grow_horizontal = 0
 
-[node name="PauseButton" type="Button" parent="PausePanel"]
+[node name="PauseButton" type="Button" parent="TimePanels/PausePanel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -33,9 +71,57 @@ grow_vertical = 2
 expand_icon = true
 script = ExtResource("1_p2rb8")
 
-[node name="PauseSprite" type="Sprite2D" parent="PausePanel/PauseButton"]
+[node name="PauseSprite" type="Sprite2D" parent="TimePanels/PausePanel/PauseButton"]
 position = Vector2(38, 39)
 scale = Vector2(0.107422, 0.107422)
 texture = ExtResource("1_othhy")
 
-[connection signal="pressed" from="PausePanel/PauseButton" to="PausePanel/PauseButton" method="OnPauseButtonPressed"]
+[node name="SpeedPanel" type="Panel" parent="TimePanels"]
+offset_left = -290.0
+offset_top = 102.0
+offset_right = -83.0
+offset_bottom = 142.0
+script = ExtResource("4_gl1ce")
+
+[node name="MinusButton" type="Button" parent="TimePanels/SpeedPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 5.0
+offset_top = -15.0
+offset_right = 35.0
+offset_bottom = 15.0
+grow_vertical = 2
+icon = ExtResource("4_gajxx")
+expand_icon = true
+
+[node name="PlusButton" type="Button" parent="TimePanels/SpeedPanel"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -15.0
+offset_right = -5.0
+offset_bottom = 15.0
+grow_horizontal = 0
+grow_vertical = 2
+icon = ExtResource("5_30dlf")
+expand_icon = true
+
+[node name="SpeedLabel" type="Label" parent="TimePanels/SpeedPanel"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 35.0
+text = ">>>>>>>>>>"
+label_settings = SubResource("LabelSettings_aloew")
+vertical_alignment = 1
+
+[connection signal="pressed" from="TimePanels/PausePanel/PauseButton" to="TimePanels/PausePanel/PauseButton" method="OnPauseButtonPressed"]
+[connection signal="pressed" from="TimePanels/SpeedPanel/MinusButton" to="TimePanels/SpeedPanel" method="OnDecreaseSpeedPressed"]
+[connection signal="pressed" from="TimePanels/SpeedPanel/PlusButton" to="TimePanels/SpeedPanel" method="OnIncreaseSpeedPressed"]

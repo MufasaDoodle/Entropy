@@ -13,17 +13,12 @@ public partial class PauseButton : Button
 		unpauseIcon = GD.Load<Texture2D>("res://Assets/Icons/play-button.svg");
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
-
 	public void OnPauseButtonPressed()
 	{
-		GameManager.IsPaused = !GameManager.IsPaused;
+		GameManager.Instance.TogglePause();
 		var spriteNode = GetNode<Sprite2D>("PauseSprite");
 
-		if (GameManager.IsPaused)
+		if (GameManager.Instance.IsPaused)
 		{
 			spriteNode.Texture = unpauseIcon;
 		}
@@ -32,6 +27,6 @@ public partial class PauseButton : Button
 			spriteNode.Texture = pauseIcon;
 		}		
 
-		GD.Print("Pause Pressed. Paused = " + GameManager.IsPaused);
+		GD.Print("Pause Pressed. Paused = " + GameManager.Instance.IsPaused);
 	}
 }
