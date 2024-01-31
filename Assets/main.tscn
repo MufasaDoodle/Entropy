@@ -1,10 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://siwardv11rdn"]
+[gd_scene load_steps=7 format=3 uid="uid://siwardv11rdn"]
 
 [ext_resource type="Texture2D" uid="uid://u3l1jfx6owae" path="res://icon.svg" id="1_hirma"]
 [ext_resource type="PackedScene" uid="uid://wr054008837e" path="res://UI_Scene.tscn" id="2_26ac6"]
 [ext_resource type="Texture2D" uid="uid://djukjg2cm5i1j" path="res://Assets/Textures/map_background.tres" id="3_oynh5"]
+[ext_resource type="Script" path="res://Assets/Scripts/SystemMap.cs" id="4_gwteo"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_eejm2"]
+size = Vector2(1920, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t5jrf"]
 size = Vector2(1920, 1080)
 
 [node name="Main" type="Node2D"]
@@ -19,3 +23,16 @@ texture = ExtResource("1_hirma")
 position = Vector2(960, 540)
 mesh = SubResource("QuadMesh_eejm2")
 texture = ExtResource("3_oynh5")
+script = ExtResource("4_gwteo")
+
+[node name="Area2D" type="Area2D" parent="MeshInstance2D"]
+position = Vector2(-960, -540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeshInstance2D/Area2D"]
+self_modulate = Color(1, 1, 1, 0)
+position = Vector2(960, 540)
+shape = SubResource("RectangleShape2D_t5jrf")
+
+[connection signal="input_event" from="MeshInstance2D/Area2D" to="MeshInstance2D" method="OnInputEvent"]
+[connection signal="mouse_entered" from="MeshInstance2D/Area2D" to="MeshInstance2D" method="OnMouseEnter"]
+[connection signal="mouse_exited" from="MeshInstance2D/Area2D" to="MeshInstance2D" method="OnMouseExit"]
