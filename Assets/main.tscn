@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://siwardv11rdn"]
+[gd_scene load_steps=5 format=3 uid="uid://siwardv11rdn"]
 
 [ext_resource type="Texture2D" uid="uid://u3l1jfx6owae" path="res://icon.svg" id="1_hirma"]
 [ext_resource type="PackedScene" uid="uid://wr054008837e" path="res://UI_Scene.tscn" id="2_26ac6"]
+[ext_resource type="Texture2D" uid="uid://djukjg2cm5i1j" path="res://Assets/Textures/map_background.tres" id="3_oynh5"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_eejm2"]
+size = Vector2(1920, 1080)
 
 [node name="Main" type="Node2D"]
 
@@ -10,3 +14,8 @@ position = Vector2(940, 525)
 texture = ExtResource("1_hirma")
 
 [node name="CanvasLayer" parent="." instance=ExtResource("2_26ac6")]
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+position = Vector2(960, 540)
+mesh = SubResource("QuadMesh_eejm2")
+texture = ExtResource("3_oynh5")

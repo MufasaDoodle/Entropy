@@ -1,14 +1,20 @@
 using Godot;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 public partial class GameManager : Node
-{
+{	
+	private double timePerTick;
+	private double tickTimer = 0f;
+
 	private bool isPaused;
 
-	public int Ticks { get; set; }
-
-	private double timePerTick;
+	public bool IsPaused
+		{
+			get { return isPaused; }
+			set { isPaused = value; }
+		}	
 
 	public double TimePerTick
 	{
@@ -27,10 +33,7 @@ public partial class GameManager : Node
 	public int MaxSpeed { get; private set; } = 10;
 	public int MinSpeed { get; private set; } = 1;
 
-
-	private double tickTimer = 0f;
-
-	public delegate void TimeTickEventHandler(int ticks);
+	public delegate void TimeTickEventHandler(string date);
 	public event TimeTickEventHandler OnTimeTick;
 
 	public delegate void SpeedChangedEventHandler(int speed);
@@ -38,14 +41,14 @@ public partial class GameManager : Node
 
 	public static GameManager Instance { get; private set; }
 
+	public int Ticks { get; private set; }
+
+	public DateOnly CurrentDate { get; private set; }
+
 	/// <summary>
 	/// Whether the game is currently paused or not
 	/// </summary>
-	public bool IsPaused
-	{
-		get { return isPaused; }
-		set { isPaused = value; }
-	}
+	
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -55,6 +58,8 @@ public partial class GameManager : Node
 		CurrentSpeed = 1;
 		Ticks = 0;
 		IsPaused = true;
+		var today = DateTime.Now;
+		CurrentDate = new DateOnly(today.Year, today.Month, today.Day);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -110,7 +115,12 @@ public partial class GameManager : Node
 	private void ProcessTimeTick()
 	{
 		Ticks++;
-		OnTimeTick?.Invoke(Ticks);
-		GD.Print("Tick: " + Ticks);
+		CurrentDate = CurrentDate.AddDays(1);
+		OnTimeTick?.Invoke(GetCurrentDateAsString());
+	}
+
+	public string GetCurrentDateAsString()
+	{
+		return $"{CurrentDate.Day}-{CurrentDate.Month}-{CurrentDate.Year}";
 	}
 }

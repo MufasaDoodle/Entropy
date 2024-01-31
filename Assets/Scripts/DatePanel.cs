@@ -9,12 +9,13 @@ public partial class DatePanel : Panel
 	public override void _Ready()
 	{
 		currentDate = GetNode<Label>("DateLabel");
-		currentDate.Text = $"Ticks: {GameManager.Instance.Ticks}";
+		currentDate.Text = GameManager.Instance.GetCurrentDateAsString();
 		GameManager.Instance.OnTimeTick += SetDate;
 	}
 
-	public void SetDate(int ticks)
+	public void SetDate(string date)
 	{
-		currentDate.Text = $"Ticks: {ticks}";
+		GD.Print(date);
+		currentDate.Text = date;
 	}
 }

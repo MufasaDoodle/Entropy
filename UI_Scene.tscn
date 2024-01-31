@@ -29,6 +29,7 @@ offset_bottom = 40.0
 grow_horizontal = 0
 
 [node name="DatePanel" type="Panel" parent="TimePanels"]
+layout_mode = 0
 offset_left = -295.0
 offset_right = -75.0
 offset_bottom = 100.0
@@ -40,7 +41,7 @@ offset_left = 7.0
 offset_top = 9.0
 offset_right = 211.0
 offset_bottom = 90.0
-text = "Ticks: xxxx"
+text = "01-01-0000"
 label_settings = SubResource("LabelSettings_kkath")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -77,6 +78,7 @@ scale = Vector2(0.107422, 0.107422)
 texture = ExtResource("1_othhy")
 
 [node name="SpeedPanel" type="Panel" parent="TimePanels"]
+layout_mode = 0
 offset_left = -290.0
 offset_top = 102.0
 offset_right = -83.0
