@@ -4,7 +4,64 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 public partial class GameManager : Node
-{	
+{
+
+	//NOTE: the OnEnable method is the Unity override init function. 
+	//		for now I've moved it to the _EnterTree function which is Godot
+	//		but I want to make sure that this piece of code is run before any 
+	//		other OnReady functions from other scripts
+
+	/*
+	// Use this for initialization
+	void OnEnable()
+	{
+		Galaxy = new Galaxy();
+		Galaxy.Generate(100);
+	}
+	*/
+
+	
+
+
+
+
+
+
+	//called before _Ready()
+	public override void _EnterTree()
+	{
+		GD.Print($"GameManager init");
+		Instance = this;
+		galaxy = new Galaxy();
+		galaxy.Generate(3);
+		GD.Print($"GameManager init complete");
+
+		base._EnterTree(); 
+	}
+
+	//TODO: make into property with proper accessibility
+	public Galaxy galaxy;
+
+	//seconds since game start
+	//used to calculate precise locations of orbital bodies 
+	ulong galacticTime = 0;
+
+	/// <summary>
+	/// Increment the galactic time by given number in seconds. Updates locations of every orbital body in every star system
+	/// </summary>
+	/// <param name="numSeconds">Number of seconds to increment time with. Cannot be negative</param>
+	public void AdvanceTime(int numSeconds)
+	{
+		galacticTime = galacticTime + (uint)numSeconds;
+
+		galaxy.Update(galacticTime);
+	}
+
+
+
+
+
+
 	private double timePerTick;
 	private double tickTimer = 0f;
 
@@ -53,7 +110,6 @@ public partial class GameManager : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Instance = this;
 		TimePerTick = 2f;
 		CurrentSpeed = 1;
 		Ticks = 0;
@@ -116,6 +172,7 @@ public partial class GameManager : Node
 	{
 		Ticks++;
 		CurrentDate = CurrentDate.AddDays(1);
+		AdvanceTime(24 * 60 * 60); 
 		OnTimeTick?.Invoke(GetCurrentDateAsString());
 	}
 

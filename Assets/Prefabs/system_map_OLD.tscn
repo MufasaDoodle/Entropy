@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1curjpeie0hq"]
+
+[ext_resource type="Texture2D" uid="uid://djukjg2cm5i1j" path="res://Assets/Textures/map_background.tres" id="1_8ko8o"]
+[ext_resource type="Script" path="res://Assets/Scripts/SystemMap.cs" id="2_ngxq3"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_eejm2"]
+size = Vector2(1920, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t5jrf"]
+size = Vector2(1920, 1080)
+
+[node name="SystemMap" type="MeshInstance2D"]
+position = Vector2(960, 540)
+mesh = SubResource("QuadMesh_eejm2")
+texture = ExtResource("1_8ko8o")
+script = ExtResource("2_ngxq3")
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(-960, -540)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+self_modulate = Color(1, 1, 1, 0)
+position = Vector2(960, 540)
+shape = SubResource("RectangleShape2D_t5jrf")
+
+[connection signal="input_event" from="Area2D" to="." method="OnInputEvent"]
+[connection signal="mouse_entered" from="Area2D" to="." method="OnMouseEnter"]
+[connection signal="mouse_exited" from="Area2D" to="." method="OnMouseExit"]
