@@ -14,12 +14,10 @@ public class Planet : Orbital
 
 	public Planet()
 	{
-		GD.Print($"Empty planet object created");
 	}
 
 	public void Generate(SolarSystem system, Orbital star, SystemBand systemBand, MinMaxStruct bandLimits_m)
 	{
-		GD.Print($"Generating planet...");
 		// Randomize our values
 		Parent = star;
 		SystemBand = systemBand;
@@ -27,13 +25,6 @@ public class Planet : Orbital
 		SetBodyMassDensityRadiusByType();
 		OrbitalDistance = (ulong)rng.RandfRange((float)bandLimits_m.Min, (float)bandLimits_m.Max);
 		OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, Mass, Parent.Mass);
-		ulong rad1 = OrbitalMath.GetOrbitalPeriodCircularOrbitWithRadius(Radius, Parent.Mass);
-		ulong rad2 = OrbitalMath.GetOrbitalPeriodCircularOrbitWithRadius(Radius, Mass, Parent.Mass);
-		ulong dista = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, Mass, Parent.Mass);
-		//OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, Mass, Parent.Mass);
-		GD.Print($"With Radius: {rad1}");
-		GD.Print($"With Radius2: {rad2}");
-		GD.Print($"With Distance: {dista}");
 		GraphicID = rng.RandiRange(1, 12);    // TODO: Make this not poop
 
 		//for now we're not gonna generate any moons. will be implemented later
@@ -49,8 +40,6 @@ public class Planet : Orbital
 			moon.OrbitalDistance = 100000000000; // FIXME: This makes no sense;
 			OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, moon.Mass, this.Mass);
 		}
-
-		GD.Print($"	Done generating planet");
 	}
 
 	public void MakeEarth()
@@ -62,7 +51,6 @@ public class Planet : Orbital
 
 	private void SetBodyMassDensityRadiusByType()
 	{
-		GD.Print($"	setting mass, density, radius");
 		double min = 0f;
 		double max = 0f;
 

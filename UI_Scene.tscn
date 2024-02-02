@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://wr054008837e"]
+[gd_scene load_steps=10 format=3 uid="uid://wr054008837e"]
 
 [ext_resource type="Texture2D" uid="uid://coqn6sm0tfepa" path="res://Assets/Icons/play-button.svg" id="1_othhy"]
 [ext_resource type="Script" path="res://Assets/Scripts/PauseButton.cs" id="1_p2rb8"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cb7mtudbi8018" path="res://Assets/Icons/minus.png" id="4_gajxx"]
 [ext_resource type="Script" path="res://Assets/Scripts/SpeedControls.cs" id="4_gl1ce"]
 [ext_resource type="Texture2D" uid="uid://bgud775h6a4y3" path="res://Assets/Icons/plus-symbol-button.png" id="5_30dlf"]
+[ext_resource type="Script" path="res://Assets/Scripts/SystemButtonControls.cs" id="7_uku6s"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_kkath"]
 font_size = 38
@@ -144,6 +145,30 @@ text = ">>>>>>>>>>"
 label_settings = SubResource("LabelSettings_aloew")
 vertical_alignment = 1
 
+[node name="Control" type="Control" parent="Control"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_uku6s")
+
+[node name="Button" type="Button" parent="Control/Control"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 1003.0
+offset_right = 136.0
+offset_bottom = 1034.0
+text = "prev"
+
+[node name="Button2" type="Button" parent="Control/Control"]
+layout_mode = 0
+offset_left = 162.0
+offset_top = 1003.0
+offset_right = 258.0
+offset_bottom = 1034.0
+text = "next"
+
 [connection signal="pressed" from="Control/TimePanels/PausePanel/PauseButton" to="Control/TimePanels/PausePanel/PauseButton" method="OnPauseButtonPressed"]
 [connection signal="pressed" from="Control/TimePanels/SpeedPanel/MinusButton" to="Control/TimePanels/SpeedPanel" method="OnDecreaseSpeedPressed"]
 [connection signal="pressed" from="Control/TimePanels/SpeedPanel/PlusButton" to="Control/TimePanels/SpeedPanel" method="OnIncreaseSpeedPressed"]
+[connection signal="pressed" from="Control/Control/Button" to="Control/Control" method="OnPrevButtonPressed"]
+[connection signal="pressed" from="Control/Control/Button2" to="Control/Control" method="OnNextButtonPressed"]

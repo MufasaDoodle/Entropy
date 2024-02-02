@@ -15,7 +15,6 @@ public partial class DatePanel : Panel
 
 	public void SetDate(string date)
 	{
-		GD.Print(date);
 		currentDate.Text = date;
 	}
 }

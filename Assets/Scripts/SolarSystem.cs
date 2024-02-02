@@ -28,10 +28,8 @@ public class SolarSystem
 		Star = myStar;
 
 		int planetAmount = rng.RandiRange(1, 8);
-		GD.Print($"Star will generate {planetAmount} planets");
 
 		DeterminePlanetBands(planetAmount);
-		GD.Print($"Done.\nInner: {numInnerZoneBodies}\nHab: {numHabitableZoneBodies}\nOuter: {numOuterZoneBodies}");
 
 		CreateBodyForBand(SystemBand.InnerBand, Star.innerZone_m, numInnerZoneBodies);
 		CreateBodyForBand(SystemBand.HabitableBand, Star.habitableZone_m, numHabitableZoneBodies);
@@ -42,7 +40,6 @@ public class SolarSystem
 
 	public void DeterminePlanetBands(int numberOfBodies)
 	{
-		GD.Print($"Determining planet bands...");
 		numInnerZoneBodies = 0;
 		numHabitableZoneBodies = 0;
 		numOuterZoneBodies = 0;
@@ -82,7 +79,6 @@ public class SolarSystem
 
 	public void CreateBodyForBand(SystemBand band, MinMaxStruct bandLimits_m, int num)
 	{
-		GD.Print($"Creating {num} bodies for {band} within {bandLimits_m.Min} and {bandLimits_m.Max}");
 		for (int i = 0; i < num; i++)
 		{
 			Planet planet = new Planet();

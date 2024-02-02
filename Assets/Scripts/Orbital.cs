@@ -11,9 +11,6 @@ public partial class Orbital
 
 	public Orbital()
 	{
-		//TODO: calculate the orbital period with kepler's third law
-		// OrbitalMath.GetOrbitalPeriodCircularOrbit()
-		GD.Print($"Generating body");
 		SetStarMassRadiusByType();
 		SetLuminosity();
 		SetUpStarZones();

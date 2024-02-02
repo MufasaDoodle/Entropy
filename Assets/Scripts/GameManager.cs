@@ -5,36 +5,12 @@ using System.Diagnostics;
 
 public partial class GameManager : Node
 {
-
-	//NOTE: the OnEnable method is the Unity override init function. 
-	//		for now I've moved it to the _EnterTree function which is Godot
-	//		but I want to make sure that this piece of code is run before any 
-	//		other OnReady functions from other scripts
-
-	/*
-	// Use this for initialization
-	void OnEnable()
-	{
-		Galaxy = new Galaxy();
-		Galaxy.Generate(100);
-	}
-	*/
-
-	
-
-
-
-
-
-
 	//called before _Ready()
 	public override void _EnterTree()
 	{
-		GD.Print($"GameManager init");
 		Instance = this;
 		galaxy = new Galaxy();
 		galaxy.Generate(3);
-		GD.Print($"GameManager init complete");
 
 		base._EnterTree(); 
 	}
@@ -57,16 +33,14 @@ public partial class GameManager : Node
 		galaxy.Update(galacticTime);
 	}
 
-
-
-
-
-
 	private double timePerTick;
 	private double tickTimer = 0f;
 
 	private bool isPaused;
 
+	/// <summary>
+	/// Whether the game is currently paused or not
+	/// </summary>
 	public bool IsPaused
 		{
 			get { return isPaused; }
@@ -102,11 +76,7 @@ public partial class GameManager : Node
 
 	public DateOnly CurrentDate { get; private set; }
 
-	/// <summary>
-	/// Whether the game is currently paused or not
-	/// </summary>
 	
-
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
