@@ -23,7 +23,7 @@ public class SolarSystem
 	{
 		// Make a star with planets orbiting
 		Star = new Star();
-		Star.GraphicID = 0;
+		Star.GraphicsName = "sun.png";
 		Star.Generate(this);
 
 		int planetAmount = rng.RandiRange(1, 8);

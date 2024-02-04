@@ -11,6 +11,7 @@ public partial class Orbital
 
 	public Orbital()
 	{
+		BodyName = "Unnamed";
 		Children = new List<Orbital>();
 		InitAngle = rng.RandfRange(0, Mathf.Pi * 2);
 	}
@@ -49,10 +50,14 @@ public partial class Orbital
 
 	public double Radius;
 
-	public int GraphicID;
+	public string GraphicsName { get; set; }
 
-	// We need to be able to get an X, Y (and maybe Z) coordinate for our location
-	// for the purpose of rendering the Oribtal on screen
+	public string BodyName {  get; set; }
+
+	
+	/// <summary>
+	/// The body's position relative to the system's star (in meters)
+	/// </summary>
 	public Vector2 Position
 	{
 		get
@@ -65,11 +70,6 @@ public partial class Orbital
 				Mathf.Sin(InitAngle + OffsetAngle) * OrbitalDistance,
 				-Mathf.Cos(InitAngle + OffsetAngle) * OrbitalDistance
 			);
-
-			if (Parent != null)
-			{
-				myOffset += Parent.Position;
-			}
 
 			return myOffset;
 		}

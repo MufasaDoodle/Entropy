@@ -147,7 +147,17 @@ public partial class SolarSystemView : Node2D
 		{
 			//we makin a planet
 			instance.Position = o.Position / currentZoomLevel; //set our position based on the scaling level and in relation to parent body's position
-			spriteNode.Texture = planetTex;
+
+			if(o.GraphicsName == string.Empty) 
+			{
+				spriteNode.Texture = planetTex;
+			}
+			else
+			{
+				Texture2D planetTexture = GD.Load<Texture2D>($"res://Assets/Icons/SolIcons/{o.GraphicsName}");
+				spriteNode.Texture = planetTexture;
+			}
+			
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = false; //ensures that this body will have orbital lines drawn
 			DrawOrbitCircle(o, instance, parentNode); //force an initial redraw of the orbital circle

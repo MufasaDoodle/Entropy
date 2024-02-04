@@ -25,7 +25,7 @@ public class Planet : Orbital
 		SetBodyMassDensityRadiusByType();
 		OrbitalDistance = (ulong)rng.RandfRange((float)bandLimits_m.Min, (float)bandLimits_m.Max);
 		OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, Mass, Parent.Mass);
-		GraphicID = rng.RandiRange(1, 12);    // TODO: Make this not poop
+		GraphicsName = "Planet.png";    // TODO: Make this not poop
 
 		//for now we're not gonna generate any moons. will be implemented later
 		int maxMoons = 0;
@@ -101,16 +101,15 @@ public class Planet : Orbital
 		Radius = radius;
 		Density = density;
 	}
-
-	public static double KmToM(double kilometers)
-	{
-		return kilometers * 1000.0;
-	}
 }
 
 public enum BodyType
 {
 	Planet,
+	IceGiant,
+	GasDwarf,
+	Terrestrial,
+	DwarfPlanet,
 	GasGiant,
 	Moon,
 	Asteroid,
