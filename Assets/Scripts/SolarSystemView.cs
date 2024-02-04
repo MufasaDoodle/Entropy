@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public partial class SolarSystemView : Node
+public partial class SolarSystemView : Node2D
 {
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -21,6 +21,11 @@ public partial class SolarSystemView : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if (isDragging)
+		{
+			DoDrag();
+		}
+
 		if (solarSystem != null)
 		{
 			//UpdateSprites(solarSystem.Star);
@@ -36,6 +41,10 @@ public partial class SolarSystemView : Node
 	//public Sprite[] Sprites;
 
 	public ulong currentZoomLevel = 1500000000;
+
+	bool isDragging = false;
+	Vector2 offset = new Vector2(0, 0);
+
 
 	PackedScene planetScene;
 	Texture2D planetTex;
@@ -54,7 +63,7 @@ public partial class SolarSystemView : Node
 
 	public void NextSystem()
 	{
-		int nextID = currentID +1;
+		int nextID = currentID + 1;
 		if (nextID < GameManager.Instance.galaxy.SolarSystems.Count)
 		{
 			ShowSolarSystem(nextID);
@@ -63,7 +72,7 @@ public partial class SolarSystemView : Node
 
 	public void PrevSystem()
 	{
-		int nextID = currentID -1;
+		int nextID = currentID - 1;
 		if (nextID >= 0)
 		{
 			ShowSolarSystem(nextID);
@@ -115,7 +124,7 @@ public partial class SolarSystemView : Node
 
 	bool creatingStar = true;
 
-	void CreateNodesForOrbital(Node parentNode, Orbital o)
+	void CreateNodesForOrbital(Node2D parentNode, Orbital o)
 	{
 		var instance = planetScene.Instantiate<Node2D>(); //instantiate planet based on scene
 		orbitalToNodeMap[o] = instance; //map to orbital in dictionary
@@ -136,6 +145,8 @@ public partial class SolarSystemView : Node
 			Vector2 pos = new Vector2(windowSize.X / 2f, windowSize.Y / 2f);
 			instance.Position = pos;
 			spriteNode.Texture = sunTex;
+			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
+			orbitCircleNode.isStar = true;
 
 			creatingStar = false;
 		}
@@ -144,8 +155,10 @@ public partial class SolarSystemView : Node
 			//we makin a planet
 			instance.Position = o.Position / currentZoomLevel; //set our position based on the scaling level
 			spriteNode.Texture = planetTex;
+			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
+			orbitCircleNode.isStar = false;
+			DrawOrbitCircle(o, instance, parentNode);
 		}
-		//now we need to set the texture of the instanced planet
 
 		//recursively instantiate and add sprites to each child this body has
 		for (int i = 0; i < o.Children.Count; i++)
@@ -169,6 +182,7 @@ public partial class SolarSystemView : Node
 			Node2D node = orbitalToNodeMap[o];
 			Vector2 oldPos = node.Position;
 			node.Position = o.Position / currentZoomLevel;
+			DrawOrbitCircle(o, node, (Node2D)node.GetParent());
 		}
 		else
 		{
@@ -181,17 +195,62 @@ public partial class SolarSystemView : Node
 		}
 	}
 
+	private void DrawOrbitCircle(Orbital o, Node2D bodyToDrawFor, Node2D bodyParentNode)
+	{
+		var orbitCircleNode = bodyToDrawFor.GetNode<OrbitCircle>("OrbitCircle");
+		if (orbitCircleNode.isStar == true) return;
+
+		//get the vector for the star, relative to this body
+		Vector2 posToDrawAt = new Vector2(-(bodyToDrawFor.Position.X), -(bodyToDrawFor.Position.Y));
+
+		//draw the orbital circle centered at the star, with a radius depending on orbital distance and the current zoom scale
+		orbitCircleNode.DrawOrbitCircle(posToDrawAt, o.OrbitalDistance / currentZoomLevel); 
+	}
+
+	private void DoDrag()
+	{
+		//trying to clamp the map to the edges of the screen
+		/*
+		var screenSize = GetViewportRect().Size;
+		var mapSize = Texture.GetSize();
+
+		Vector2 newPos = GetGlobalMousePosition() - offset;
+
+		newPos.X = Mathf.Clamp(newPos.X, mapSize.X, screenSize.X - mapSize.X);
+		newPos.Y = Mathf.Clamp(newPos.Y, mapSize.Y, screenSize.Y - mapSize.Y);
+
+		Position = newPos;
+		*/
+
+		Position = GetGlobalMousePosition() - offset;
+		OnUpdateSprites("");
+	}
+
 	public override void _UnhandledInput(InputEvent evt)
 	{
 		if (evt is InputEventMouseButton)
 		{
 			var mouseEvent = (InputEventMouseButton)evt;
+			if (mouseEvent.ButtonIndex == MouseButton.Left)
+			{
+				if (mouseEvent.Pressed)
+				{
+					isDragging = true;
+					offset = GetGlobalMousePosition() - GlobalPosition;
+				}
+				else
+				{
+					isDragging = false;
+				}
+			}
+
 			if (mouseEvent.ButtonIndex == MouseButton.WheelDown)
 			{
 				if (currentZoomLevel < maxZoomLevel)
 				{
 					currentZoomLevel = (ulong)((double)currentZoomLevel * 1.05);
 					Mathf.Clamp(currentZoomLevel, minZoomLevel, maxZoomLevel);
+					OnUpdateSprites("");
 				}
 			}
 			else if (mouseEvent.ButtonIndex == MouseButton.WheelUp)
@@ -200,11 +259,11 @@ public partial class SolarSystemView : Node
 				{
 					currentZoomLevel = (ulong)((double)currentZoomLevel * 0.95);
 					Mathf.Clamp(currentZoomLevel, minZoomLevel, maxZoomLevel);
+					OnUpdateSprites("");
 				}
 			}
 		}
 
-		OnUpdateSprites("");
 
 		base._UnhandledInput(evt);
 	}
