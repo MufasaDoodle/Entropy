@@ -6,7 +6,6 @@ using System.Threading;
 
 public partial class SolarSystemView : Node2D
 {
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		Instance = this;
@@ -19,7 +18,6 @@ public partial class SolarSystemView : Node2D
 		ShowSolarSystem(0);
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		if (isDragging)
@@ -29,39 +27,41 @@ public partial class SolarSystemView : Node2D
 
 		if (solarSystem != null)
 		{
+			//if we ever want to force a UI update of the solar system we can un-comment the below line
 			//UpdateSprites(solarSystem.Star);
 		}
 	}
 
-	//TODO figure this stuff out
-
+	/// <summary>
+	/// The singleton instance of the solar system UI handler
+	/// </summary>
 	public static SolarSystemView Instance;
 
 	SolarSystem solarSystem;
 
-	//public Sprite[] Sprites;
-
-	public ulong currentZoomLevel = 1500000000;
-
+	// CLASS TEMPORARY FIELDS
 	bool isDragging = false;
 	Vector2 offset = new Vector2(0, 0);
+	int currentID = 0;
 
-
+	// GODOT RELATED FIELD
 	PackedScene planetScene;
 	Texture2D planetTex;
 	Texture2D sunTex;
 
-
+	// ZOOM RELATED FIELDS
+	public ulong currentZoomLevel = 1500000000;
 	ulong minZoomLevel = 10000;
-	ulong maxZoomLevel = 150000000000;
-
-	int currentID = 0;
+	ulong maxZoomLevel = 150000000000;	
 
 	/// <summary>
 	/// Dictionary mapping orbital model objects to their in-game Godot object counterparts
 	/// </summary>
 	Dictionary<Orbital, Node2D> orbitalToNodeMap;
 
+	/// <summary>
+	/// Loads the next solar system in order they were created
+	/// </summary>
 	public void NextSystem()
 	{
 		int nextID = currentID + 1;
@@ -71,6 +71,9 @@ public partial class SolarSystemView : Node2D
 		}
 	}
 
+	/// <summary>
+	/// Loads the previous solar system in order they were created
+	/// </summary>
 	public void PrevSystem()
 	{
 		int nextID = currentID - 1;
@@ -80,6 +83,10 @@ public partial class SolarSystemView : Node2D
 		}
 	}
 
+	/// <summary>
+	/// Display the solar system at the specified ID
+	/// </summary>
+	/// <param name="solarSystemID">ID of solar system to display</param>
 	public void ShowSolarSystem(int solarSystemID)
 	{
 		currentID = solarSystemID;
@@ -109,22 +116,13 @@ public partial class SolarSystemView : Node2D
 		//then recursively go through each child of the star, and each child's children
 		//so every body gets an object
 		CreateNodesForOrbital(this, solarSystem.Star);
-		creatingStar = true;
-
-		int nodeAmount = 0;
-
-		foreach (var node in GetChildren())
-		{
-			nodeAmount++;
-			foreach (var child in node.GetChildren())
-			{
-				nodeAmount++;
-			}
-		}
 	}
 
-	bool creatingStar = true;
-
+	/// <summary>
+	/// Recursively creates nodes on screen for given body, its children and children's children 
+	/// </summary>
+	/// <param name="parentNode"></param>
+	/// <param name="o"></param>
 	void CreateNodesForOrbital(Node2D parentNode, Orbital o)
 	{
 		var instance = planetScene.Instantiate<Node2D>(); //instantiate planet based on scene
@@ -133,27 +131,26 @@ public partial class SolarSystemView : Node2D
 		parentNode.AddChild(instance);
 
 		var spriteNode = instance.GetNode<Sprite2D>("Sprite2D");
-		if (creatingStar)
+
+		if (o.GetType() == typeof(Star)) //star properties have to be set differently to other bodies, like planets and moon
 		{
 			//we makin a star
 			//manually place the star in the middle of the screen
 			var windowSize = DisplayServer.WindowGetSize();
-			Vector2 pos = new Vector2(windowSize.X / 2f, windowSize.Y / 2f);
-			instance.Position = pos;
+			Vector2 pos = new Vector2(windowSize.X / 2f, windowSize.Y / 2f); //middle of screen
+			instance.Position = pos; //set star's position to middle of screen
 			spriteNode.Texture = sunTex;
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
-			orbitCircleNode.isStar = true;
-
-			creatingStar = false;
+			orbitCircleNode.isStar = true; //this ensures that stars don't have orbital circles drawn
 		}
 		else
 		{
 			//we makin a planet
-			instance.Position = o.Position / currentZoomLevel; //set our position based on the scaling level
+			instance.Position = o.Position / currentZoomLevel; //set our position based on the scaling level and in relation to parent body's position
 			spriteNode.Texture = planetTex;
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
-			orbitCircleNode.isStar = false;
-			DrawOrbitCircle(o, instance, parentNode);
+			orbitCircleNode.isStar = false; //ensures that this body will have orbital lines drawn
+			DrawOrbitCircle(o, instance, parentNode); //force an initial redraw of the orbital circle
 		}
 
 		//recursively instantiate and add sprites to each child this body has
@@ -163,28 +160,21 @@ public partial class SolarSystemView : Node2D
 		}
 	}
 
-	bool updatingStarPosition = true;
-
 	public void OnUpdateSprites(string date)
 	{
 		UpdateSprites(solarSystem.Star);
-		updatingStarPosition = true;
 	}
 
 	void UpdateSprites(Orbital o)
 	{
-		if (updatingStarPosition == false)
+		if (o.GetType() != typeof(Star)) //if this isn't a star. We don't need to update star sprites
 		{
 			Node2D node = orbitalToNodeMap[o];
-			Vector2 oldPos = node.Position;
-			node.Position = o.Position / currentZoomLevel;
-			DrawOrbitCircle(o, node, (Node2D)node.GetParent());
-		}
-		else
-		{
-			updatingStarPosition = false;
+			node.Position = o.Position / currentZoomLevel; // set our position based on the scaling level and in relation to parent body's position
+			DrawOrbitCircle(o, node, (Node2D)node.GetParent()); //redraw orbital circle
 		}
 
+		//update any children this orbital body may have
 		for (int i = 0; i < o.Children.Count; i++)
 		{
 			UpdateSprites(o.Children[i]);
@@ -194,12 +184,12 @@ public partial class SolarSystemView : Node2D
 	private void DrawOrbitCircle(Orbital o, Node2D bodyToDrawFor, Node2D bodyParentNode)
 	{
 		var orbitCircleNode = bodyToDrawFor.GetNode<OrbitCircle>("OrbitCircle");
-		if (orbitCircleNode.isStar == true) return;
+		if (orbitCircleNode.isStar == true) return; //don't draw orbital circle if this orbital is a star
 
-		//get the vector for the star, relative to this body
+		//get the vector for the parent body, relative to this body
 		Vector2 posToDrawAt = new Vector2(-(bodyToDrawFor.Position.X), -(bodyToDrawFor.Position.Y));
 
-		//draw the orbital circle centered at the star, with a radius depending on orbital distance and the current zoom scale
+		//draw the orbital circle centered at the parent body, with a radius depending on orbital distance and the current zoom scale
 		orbitCircleNode.DrawOrbitCircle(posToDrawAt, o.OrbitalDistance / currentZoomLevel); 
 	}
 
@@ -254,10 +244,13 @@ public partial class SolarSystemView : Node2D
 			}
 		}
 
-
 		base._UnhandledInput(evt);
 	}
 
+	/// <summary>
+	/// Attempt to move the 'camera' to follow the mouse's location when zooming in or out
+	/// </summary>
+	/// <param name="isZoomIn"></param>
 	private void ZoomCamOffset(bool isZoomIn)
 	{
 		double zoomSpeed = 0.95;

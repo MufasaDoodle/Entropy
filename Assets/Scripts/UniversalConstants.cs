@@ -66,7 +66,7 @@ namespace Entropy.Assets.Scripts
 
 			public const double SolarRadiusInAu = SolarRadiusInKm / KmPerAu;
 
-			public const double SolarRadius = SolarRadiusInKm * MetersPerKm;
+			public const double SolarRadiusInM = SolarRadiusInKm * MetersPerKm;
 
 			/// <summary>
 			/// Earth's gravity in m/s^2. Aka 1g.

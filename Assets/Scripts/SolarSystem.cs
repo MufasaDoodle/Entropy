@@ -6,7 +6,7 @@ public class SolarSystem
 {
 	RandomNumberGenerator rng = new RandomNumberGenerator();
 
-	public Orbital Star {  get; set; }
+	public Star Star {  get; set; }
 
 
 	//these are only for body generation
@@ -21,11 +21,10 @@ public class SolarSystem
 
 	public void Generate()
 	{
-		// Make a single star with planets orbiting
-
-		Orbital myStar = new Orbital();
-		myStar.GraphicID = 0;
-		Star = myStar;
+		// Make a star with planets orbiting
+		Star = new Star();
+		Star.GraphicID = 0;
+		Star.Generate(this);
 
 		int planetAmount = rng.RandiRange(1, 8);
 
@@ -35,7 +34,22 @@ public class SolarSystem
 		CreateBodyForBand(SystemBand.HabitableBand, Star.habitableZone_m, numHabitableZoneBodies);
 		CreateBodyForBand(SystemBand.OuterBand, Star.outerZone_m, numOuterZoneBodies);
 
-		
+		GD.Print($"Generated star with following properties:\n" +
+			$"Mass: {UniversalConstants.Units.SolarMassInKG / Star.Mass} solar masses\n" +
+			$"Radius: {Star.Radius / UniversalConstants.Units.MetersPerKm} km\n" +
+			$"Radius compared to Sol: {UniversalConstants.Units.SolarRadiusInM / Star.Radius} solar radiuses\n" +
+			$"Luminosity: {Star.Luminosity}\n" +
+			$"MinInner: {DistanceMath.MToAU(Star.innerZone_m.Min)} AU\n" +
+			$"MaxInner: {DistanceMath.MToAU(Star.innerZone_m.Max)} AU\n" +
+			$"MinHab: {Star.MinHabitableRadius_AU} AU\n" +
+			$"MaxHab: {Star.MaxHabitableRadius_AU} AU\n" +
+			$"MinOuter: {DistanceMath.MToAU(Star.outerZone_m.Min)} AU\n" +
+			$"MaxOuter: {DistanceMath.MToAU(Star.outerZone_m.Max)} AU\n" +
+			$"Habitable zone skipped: {Star.skipHabitableZone}\n" +
+			$"Planet amounts:\n" +
+			$"Inner: {numInnerZoneBodies}\n" +
+			$"Hab: {numHabitableZoneBodies}\n" +
+			$"Outer: {numOuterZoneBodies}");
 	}
 
 	public void DeterminePlanetBands(int numberOfBodies)

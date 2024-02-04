@@ -23,5 +23,10 @@ namespace Entropy.Assets.Scripts
 		{
 			return au * UniversalConstants.Units.MetersPerAu;
 		}
+
+		public static double MToAU(double meters)
+		{
+			return meters / UniversalConstants.Units.MetersPerAu;
+		}
 	}
 }
