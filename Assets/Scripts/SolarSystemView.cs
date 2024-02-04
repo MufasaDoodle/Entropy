@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 public partial class SolarSystemView : Node2D
 {
@@ -231,9 +232,9 @@ public partial class SolarSystemView : Node2D
 		if (evt is InputEventMouseButton)
 		{
 			var mouseEvent = (InputEventMouseButton)evt;
-			if (mouseEvent.ButtonIndex == MouseButton.Left)
+			if (mouseEvent.ButtonIndex == MouseButton.Left) 
 			{
-				if (mouseEvent.Pressed)
+				if (mouseEvent.Pressed) //check if we're dragging the map
 				{
 					isDragging = true;
 					offset = GetGlobalMousePosition() - GlobalPosition;
@@ -244,12 +245,16 @@ public partial class SolarSystemView : Node2D
 				}
 			}
 
+			//even if we are dragging, we also want to handle other mouse events, like zooming in/out
 			if (mouseEvent.ButtonIndex == MouseButton.WheelDown)
 			{
 				if (currentZoomLevel < maxZoomLevel)
 				{
 					currentZoomLevel = (ulong)((double)currentZoomLevel * 1.05);
 					Mathf.Clamp(currentZoomLevel, minZoomLevel, maxZoomLevel);
+
+					ZoomCamOffset(false);
+
 					OnUpdateSprites("");
 				}
 			}
@@ -259,6 +264,9 @@ public partial class SolarSystemView : Node2D
 				{
 					currentZoomLevel = (ulong)((double)currentZoomLevel * 0.95);
 					Mathf.Clamp(currentZoomLevel, minZoomLevel, maxZoomLevel);
+
+					ZoomCamOffset(true);
+
 					OnUpdateSprites("");
 				}
 			}
@@ -266,6 +274,39 @@ public partial class SolarSystemView : Node2D
 
 
 		base._UnhandledInput(evt);
+	}
+
+	private void ZoomCamOffset(bool isZoomIn)
+	{
+		double zoomSpeed = 0.95;
+
+		var mousePos = GetGlobalMousePosition();
+
+
+		float mouseX = mousePos.X;
+		float mouseY = mousePos.Y;
+
+		var windowSize = DisplayServer.WindowGetSize();
+		Vector2 viewportCenter = new Vector2(windowSize.X / 2f, windowSize.Y / 2f);
+
+		double xOffset = mouseX - viewportCenter.X - (mouseX - viewportCenter.X) * zoomSpeed;
+		double yOffset = mouseY - viewportCenter.Y - (mouseY - viewportCenter.Y) * zoomSpeed;
+
+		/*
+		 double xOffset = mouseX - viewportCenter.X - (mouseX - viewportCenter.X) * zoomSpeed;
+		double yOffset = mouseY - viewportCenter.Y - (mouseY - viewportCenter.Y) * zoomSpeed;
+		 */
+
+		if(isZoomIn)
+		{
+			var newPos = new Vector2(Position.X + (float)-xOffset, Position.Y + (float)-yOffset); 
+			Position = newPos;
+		}
+		else
+		{
+			var newPos = new Vector2(Position.X + (float)+xOffset, Position.Y + (float)+yOffset);
+			Position = newPos;
+		}		
 	}
 }
 
