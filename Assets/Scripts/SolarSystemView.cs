@@ -132,11 +132,6 @@ public partial class SolarSystemView : Node2D
 
 		parentNode.AddChild(instance);
 
-		/*
-		if (instance.GetParent() != null)
-			instance.Reparent(parentNode); //set the parent of the planet
-		*/
-
 		var spriteNode = instance.GetNode<Sprite2D>("Sprite2D");
 		if (creatingStar)
 		{
@@ -210,19 +205,6 @@ public partial class SolarSystemView : Node2D
 
 	private void DoDrag()
 	{
-		//trying to clamp the map to the edges of the screen
-		/*
-		var screenSize = GetViewportRect().Size;
-		var mapSize = Texture.GetSize();
-
-		Vector2 newPos = GetGlobalMousePosition() - offset;
-
-		newPos.X = Mathf.Clamp(newPos.X, mapSize.X, screenSize.X - mapSize.X);
-		newPos.Y = Mathf.Clamp(newPos.Y, mapSize.Y, screenSize.Y - mapSize.Y);
-
-		Position = newPos;
-		*/
-
 		Position = GetGlobalMousePosition() - offset;
 		OnUpdateSprites("");
 	}
@@ -280,8 +262,7 @@ public partial class SolarSystemView : Node2D
 	{
 		double zoomSpeed = 0.95;
 
-		var mousePos = GetGlobalMousePosition();
-
+		var mousePos = GetLocalMousePosition();
 
 		float mouseX = mousePos.X;
 		float mouseY = mousePos.Y;
@@ -291,11 +272,6 @@ public partial class SolarSystemView : Node2D
 
 		double xOffset = mouseX - viewportCenter.X - (mouseX - viewportCenter.X) * zoomSpeed;
 		double yOffset = mouseY - viewportCenter.Y - (mouseY - viewportCenter.Y) * zoomSpeed;
-
-		/*
-		 double xOffset = mouseX - viewportCenter.X - (mouseX - viewportCenter.X) * zoomSpeed;
-		double yOffset = mouseY - viewportCenter.Y - (mouseY - viewportCenter.Y) * zoomSpeed;
-		 */
 
 		if(isZoomIn)
 		{
