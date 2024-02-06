@@ -1,10 +1,23 @@
 using Entropy.Assets.Scripts;
 using Godot;
 using System;
+using System.ComponentModel;
 
 public partial class Star : Orbital
 {
 	RandomNumberGenerator rng = new RandomNumberGenerator();
+
+	public SpectralType SpectralType { get; set; }
+
+	public double Age { get; set; }
+
+	public ulong Temperature { get; set; }
+
+	public ushort SpectralSubDivision { get; set; }
+
+	public LuminosityClass LuminosityClass { get; set; }
+
+	public string StarClass { get; set; }
 
 	/// <summary>
 	/// The luminosity of this star (joules per second or watts)
@@ -41,6 +54,7 @@ public partial class Star : Orbital
 
 	public Star()
 	{
+		OrbitalPeriod = 1;
 	}
 
 	public void Generate(SolarSystem system)
@@ -74,29 +88,25 @@ public partial class Star : Orbital
 		Luminosity = Mathf.Lerp(min, max, rng.Randf());
 	}
 
-	private void SetUpStarZones()
+	public void SetUpStarZones()
 	{
-		var dist = new MinMaxStruct
-		{
-			Min = 0.1,
-			Max = 40
-		};
+		var dist = BodyGeneration.BodyGenParameters.OrbitalDistanceByStarSpectralType[SpectralType];
 
-		if (MinHabitableRadius_m > DistanceMath.AuToMt(dist.Max) || MaxHabitableRadius_m < DistanceMath.AuToMt(dist.Min)) //check if habitable zone is too close or far to star. in that case we only generate inner and outer
+		if (MinHabitableRadius_m > dist.Max || MaxHabitableRadius_m < dist.Min) //check if habitable zone is too close or far to star. in that case we only generate inner and outer
 		{
 			// Habitable zone either too close or too far from star.
 			// Only generating inner and outer zones.
 			skipHabitableZone = true;
 
-			innerZone_m = new MinMaxStruct(DistanceMath.AuToMt(dist.Min), DistanceMath.AuToMt(dist.Max * 0.5));
+			innerZone_m = new MinMaxStruct(dist.Min, dist.Max * 0.5);
 			habitableZone_m = new MinMaxStruct(MinHabitableRadius_m, MaxHabitableRadius_m); // Still need this for later.
-			outerZone_m = new MinMaxStruct(DistanceMath.AuToMt(dist.Max * 0.5), DistanceMath.AuToMt(dist.Max));
+			outerZone_m = new MinMaxStruct(dist.Max * 0.5, dist.Max);
 		}
 		else
 		{
-			innerZone_m = new MinMaxStruct(DistanceMath.AuToMt(dist.Min), MinHabitableRadius_m);
+			innerZone_m = new MinMaxStruct(dist.Min, MinHabitableRadius_m);
 			habitableZone_m = new MinMaxStruct(MinHabitableRadius_m, MaxHabitableRadius_m);
-			outerZone_m = new MinMaxStruct(MaxHabitableRadius_m, DistanceMath.AuToMt(dist.Max));
+			outerZone_m = new MinMaxStruct(MaxHabitableRadius_m, dist.Max);
 		}
 	}
 }
@@ -108,3 +118,48 @@ public enum SystemBand
 	OuterBand,
 };
 
+public enum SpectralType
+{
+	O,
+	B,
+	A,
+	F,
+	G,
+	K,
+	M,
+	D,
+	C
+}
+
+public enum LuminosityClass
+{
+	[Description("Hypergiant")]
+	O,
+
+	[Description("Luminous Supergiant")]
+	Ia,
+
+	[Description("Intermediate Supergiant")]
+	Iab,
+
+	[Description("Less Luminous Supergiant")]
+	Ib,
+
+	[Description("Bright Giant")]
+	II,
+
+	[Description("Giant")]
+	III,
+
+	[Description("Subgiant")]
+	IV,
+
+	[Description("Main-Sequence")]
+	V,
+
+	[Description("Sub-Dwarf")]
+	sd,
+
+	[Description("White Dwarf")]
+	D,
+}

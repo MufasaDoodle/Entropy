@@ -28,5 +28,20 @@ namespace Entropy.Assets.Scripts
 		{
 			return meters / UniversalConstants.Units.MetersPerAu;
 		}
+
+		public static MinMaxStruct AuToMt(MinMaxStruct au)
+		{
+			return new MinMaxStruct(AuToMt(au.Min), AuToMt(au.Max));
+		}
+
+		public static double KmToM(double kilometers)
+		{
+			return kilometers * 1000.0;
+		}
+
+		public static double MToKm(double meters)
+		{
+			return meters / 1000.0;
+		}
 	}
 }

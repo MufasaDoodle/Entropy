@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using Entropy.Assets.Scripts;
 using Godot;
 
@@ -12,6 +13,8 @@ public class Planet : Orbital
 
 	public SystemBand SystemBand { get; set; }
 
+	public double Volume { get; set; }
+
 	public Planet()
 	{
 	}
@@ -22,7 +25,7 @@ public class Planet : Orbital
 		Parent = star;
 		SystemBand = systemBand;
 		BodyType = BodyType.Planet; //temporary. randomize at some point
-		SetBodyMassDensityRadiusByType();
+		//SetBodyMassDensityRadiusByType();
 		OrbitalDistance = (ulong)rng.RandfRange((float)bandLimits_m.Min, (float)bandLimits_m.Max);
 		OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, Mass, Parent.Mass);
 		GraphicsName = "Planet.png";    // TODO: Make this not poop
@@ -36,70 +39,10 @@ public class Planet : Orbital
 			Planet moon = new Planet();
 			this.AddChild(moon);
 			moon.BodyType = BodyType.Moon;
-			moon.SetBodyMassDensityRadiusByType();
+			//moon.SetBodyMassDensityRadiusByType();
 			moon.OrbitalDistance = 100000000000; // FIXME: This makes no sense;
 			OrbitalPeriod = OrbitalMath.GetOrbitalPeriodWithDistance(OrbitalDistance, moon.Mass, this.Mass);
 		}
-	}
-
-	public void MakeEarth()
-	{
-		OffsetAngle = 0;  // "North" of the sun
-		OrbitalDistance = 150000000000; // 150 million KM
-		OrbitalPeriod = 365 * 24 * 60 * 60;
-	}
-
-	private void SetBodyMassDensityRadiusByType()
-	{
-		double min = 0f;
-		double max = 0f;
-
-		//mass calc
-		if (BodyType == BodyType.Planet)
-		{
-			min = 0.05 * UniversalConstants.Units.EarthMassInKG;
-			max = 5 * UniversalConstants.Units.EarthMassInKG;
-		}
-		else if (BodyType == BodyType.Moon)
-		{
-			min = 1E16;
-			max = 1 * UniversalConstants.Units.EarthMassInKG;
-		}
-		else
-		{
-			min = 1E15;
-			max = 9E19;
-		}
-
-		RandomNumberGenerator rng = new RandomNumberGenerator();
-		double mass = Mathf.Lerp(min, max, Mathf.Pow(rng.Randf(), 3));
-
-		//density calc
-		if (BodyType == BodyType.Planet)
-		{
-			min = 3;
-			max = 8;
-		}
-		else if (BodyType == BodyType.Moon)
-		{
-			min = 1.4f;
-			max = 5;
-		}
-		else
-		{
-			min = 1;
-			max = 6;
-		}
-
-		double density = Mathf.Lerp(min, max, rng.Randf());
-
-		//calc radius
-		double radius = Mathf.Pow((3 * mass) / (4 * Mathf.Pi * (density / 1000)), 0.3333333333);
-		radius = radius / 1000 / 100; //convert from cm to km
-
-		Mass = mass;
-		Radius = radius;
-		Density = density;
 	}
 }
 
@@ -114,4 +57,25 @@ public enum BodyType
 	Moon,
 	Asteroid,
 	Comet
+}
+
+public enum TectonicActivity
+{
+	[Description("?")]
+	Unknown,
+
+	[Description("Dead")]
+	Dead,
+
+	[Description("Minor")]
+	Minor,
+
+	[Description("Earth-like")]
+	EarthLike,
+
+	[Description("Major")]
+	Major,
+
+	[Description("Not-Applicable")]
+	NA
 }

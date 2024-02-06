@@ -131,6 +131,7 @@ public partial class SolarSystemView : Node2D
 		parentNode.AddChild(instance);
 
 		var spriteNode = instance.GetNode<Sprite2D>("Sprite2D");
+		var labelNode = instance.GetNode<Label>("BodyNameLabel");
 
 		if (o.GetType() == typeof(Star)) //star properties have to be set differently to other bodies, like planets and moon
 		{
@@ -142,6 +143,8 @@ public partial class SolarSystemView : Node2D
 			spriteNode.Texture = sunTex;
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = true; //this ensures that stars don't have orbital circles drawn
+			instance.Name = o.BodyName;
+			labelNode.Text = o.BodyName;
 		}
 		else
 		{
@@ -151,13 +154,26 @@ public partial class SolarSystemView : Node2D
 			if(o.GraphicsName == string.Empty) 
 			{
 				spriteNode.Texture = planetTex;
+				instance.Name = o.BodyName;
+				labelNode.Text = o.BodyName;
 			}
 			else
 			{
 				Texture2D planetTexture = GD.Load<Texture2D>($"res://Assets/Icons/SolIcons/{o.GraphicsName}");
 				spriteNode.Texture = planetTexture;
+				instance.Name = o.BodyName;
+				labelNode.Text = o.BodyName;
 			}
 			
+			if(o.GetType() == typeof(Planet))
+			{
+				var planet = (Planet)o;
+				if(planet.BodyType == BodyType.Moon) //if this is a moon, we want to render the sprite behind the parent body's sprite
+				{
+					instance.ShowBehindParent = true;
+				}
+			}
+
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = false; //ensures that this body will have orbital lines drawn
 			DrawOrbitCircle(o, instance, parentNode); //force an initial redraw of the orbital circle

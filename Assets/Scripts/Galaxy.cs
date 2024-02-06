@@ -22,8 +22,7 @@ public class Galaxy
 		// We can set a seed for the random number generator, so that it
 		// starts with the same systems every time
 
-		SolarSystem sol = GenerateSol.CreateSolSystem();
-		SolarSystems.Add(sol);
+		
 
 		for (int i = 0; i < numStars; i++)
 		{
@@ -32,6 +31,8 @@ public class Galaxy
 
 			SolarSystems.Add(ss);
 		}
+		SolarSystem sol = GenerateSol.CreateSolSystem();
+		SolarSystems.Add(sol);
 	}
 
 	/// <summary>
