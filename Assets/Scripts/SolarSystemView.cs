@@ -144,11 +144,13 @@ public partial class SolarSystemView : Node2D
 			var windowSize = DisplayServer.WindowGetSize();
 			Vector2 pos = new Vector2(windowSize.X / 2f, windowSize.Y / 2f); //middle of screen
 			instance.Position = pos; //set star's position to middle of screen
-			spriteNode.Texture = sunTex;
+			spriteNode.Texture = sunTex;			
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = true; //this ensures that stars don't have orbital circles drawn
 			instance.Name = o.BodyName;
 			labelNode.Text = o.BodyName;
+			DrawPlanetDot(o, instance);
+			CheckIfDisableSprites(instance, o);
 		}
 		else
 		{
@@ -178,9 +180,11 @@ public partial class SolarSystemView : Node2D
 				}
 			}
 
+			DrawPlanetDot(o, instance);
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = false; //ensures that this body will have orbital lines drawn
 			DrawOrbitCircle(o, instance, parentNode); //force an initial redraw of the orbital circle
+			CheckIfDisableSprites(instance, o);
 		}
 
 		//recursively instantiate and add sprites to each child this body has
@@ -201,7 +205,14 @@ public partial class SolarSystemView : Node2D
 		{
 			Node2D node = orbitalToNodeMap[o];
 			node.Position = o.Position / currentZoomLevel; // set our position based on the scaling level and in relation to parent body's position
+			DrawPlanetDot(o, node);
 			DrawOrbitCircle(o, node, (Node2D)node.GetParent()); //redraw orbital circle
+			CheckIfDisableSprites(node, o);
+		}
+		else
+		{
+			Node2D node = orbitalToNodeMap[o];
+			CheckIfDisableSprites(node, o);
 		}
 
 		//update any children this orbital body may have
@@ -209,6 +220,32 @@ public partial class SolarSystemView : Node2D
 		{
 			UpdateSprites(o.Children[i]);
 		}
+	}
+
+	private void DrawPlanetDot(Orbital o, Node2D bodyToDrawFor)
+	{
+		var planetDotNode = bodyToDrawFor.GetNode<PlanetDot>("PlanetDot");
+
+		Color color;
+
+        if (o.GetType() == typeof(Planet))
+        {
+			var p = (Planet) o;
+            if (p.BodyType == BodyType.Moon)
+			{
+				color = Colors.Yellow;
+			}
+			else
+			{
+				color = Colors.Blue;
+			}
+        }
+		else
+		{
+			color = Colors.Orange;
+		}        
+
+		planetDotNode.DrawPlanetDot(color);
 	}
 
 	private void DrawOrbitCircle(Orbital o, Node2D bodyToDrawFor, Node2D bodyParentNode)
@@ -316,16 +353,58 @@ public partial class SolarSystemView : Node2D
 		var points = distanceIndicator.Points;
 		double pointLength = points[1].X - points[0].X;
 		ulong distanceInMeters = (ulong)pointLength * currentZoomLevel;
-		string distText = "";
 
 		double distInAU = Math.Round((double)(distanceInMeters / UniversalConstants.Units.MetersPerAu), 3, MidpointRounding.AwayFromZero);
 		double distInThousandsKM = Math.Round((double)(distanceInMeters / 1000d / 1000d), 1, MidpointRounding.AwayFromZero);
 
-		distText = $"{distInThousandsKM}k km ({distInAU} AU). System scale: 1:{currentZoomLevel}";
+		string distText = $"{distInThousandsKM}k km ({distInAU} AU). System scale: 1:{currentZoomLevel}";
 
 		distLabel.Text = distText;
 	}
+
+	private void CheckIfDisableSprites(Node2D node, Orbital o)
+	{
+		if (o.GetType() == typeof(Planet))
+		{
+			if (currentZoomLevel > 100000000)
+			{
+				//disable sprites
+				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
+				spriteNode.Visible = false;
+				
+				if(((Planet)o).BodyType == BodyType.Moon)
+				{
+					var labelNode = node.GetNode<Label>("BodyNameLabel");
+					labelNode.Visible = false;
+				}
+			}
+			else
+			{
+				//enable sprites
+				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
+				spriteNode.Visible = true;
+
+				if (((Planet)o).BodyType == BodyType.Moon)
+				{
+					var labelNode = node.GetNode<Label>("BodyNameLabel");
+					labelNode.Visible = true;
+				}
+			}
+		}
+		else if (o.GetType() == typeof(Star))
+		{
+			if (currentZoomLevel > 750000000)
+			{
+				//disable sprites
+				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
+				spriteNode.Visible = false;
+			}
+			else
+			{
+				//enable sprites
+				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
+				spriteNode.Visible = true;
+			}
+		}		
+	}
 }
-
-
-
