@@ -1,3 +1,4 @@
+using Entropy.Assets.Scripts;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ public partial class SolarSystemView : Node2D
 		planetScene = GD.Load<PackedScene>("res://Assets/Prefabs/planet.tscn");
 		planetTex = GD.Load<Texture2D>("res://Assets/Icons/planet.png");
 		sunTex = GD.Load<Texture2D>("res://Assets/Icons/sun.png");
+		distanceIndicator = GetNode<Line2D>("../CanvasLayer/DistanceIndicator");
+		RecalculateDistanceIndicator();
 		orbitalToNodeMap = new Dictionary<Orbital, Node2D>();
 
 		ShowSolarSystem(0);
@@ -48,11 +51,12 @@ public partial class SolarSystemView : Node2D
 	PackedScene planetScene;
 	Texture2D planetTex;
 	Texture2D sunTex;
+	Line2D distanceIndicator;
 
 	// ZOOM RELATED FIELDS
 	public ulong currentZoomLevel = 1500000000;
 	ulong minZoomLevel = 10000;
-	ulong maxZoomLevel = 150000000000;	
+	ulong maxZoomLevel = 150000000000;
 
 	/// <summary>
 	/// Dictionary mapping orbital model objects to their in-game Godot object counterparts
@@ -151,7 +155,7 @@ public partial class SolarSystemView : Node2D
 			//we makin a planet
 			instance.Position = o.Position / currentZoomLevel; //set our position based on the scaling level and in relation to parent body's position
 
-			if(o.GraphicsName == string.Empty) 
+			if (o.GraphicsName == string.Empty)
 			{
 				spriteNode.Texture = planetTex;
 				instance.Name = o.BodyName;
@@ -164,11 +168,11 @@ public partial class SolarSystemView : Node2D
 				instance.Name = o.BodyName;
 				labelNode.Text = o.BodyName;
 			}
-			
-			if(o.GetType() == typeof(Planet))
+
+			if (o.GetType() == typeof(Planet))
 			{
 				var planet = (Planet)o;
-				if(planet.BodyType == BodyType.Moon) //if this is a moon, we want to render the sprite behind the parent body's sprite
+				if (planet.BodyType == BodyType.Moon) //if this is a moon, we want to render the sprite behind the parent body's sprite
 				{
 					instance.ShowBehindParent = true;
 				}
@@ -216,7 +220,7 @@ public partial class SolarSystemView : Node2D
 		Vector2 posToDrawAt = new Vector2(-(bodyToDrawFor.Position.X), -(bodyToDrawFor.Position.Y));
 
 		//draw the orbital circle centered at the parent body, with a radius depending on orbital distance and the current zoom scale
-		orbitCircleNode.DrawOrbitCircle(posToDrawAt, o.OrbitalDistance / currentZoomLevel); 
+		orbitCircleNode.DrawOrbitCircle(posToDrawAt, o.OrbitalDistance / currentZoomLevel);
 	}
 
 	private void DoDrag()
@@ -230,7 +234,7 @@ public partial class SolarSystemView : Node2D
 		if (evt is InputEventMouseButton)
 		{
 			var mouseEvent = (InputEventMouseButton)evt;
-			if (mouseEvent.ButtonIndex == MouseButton.Left) 
+			if (mouseEvent.ButtonIndex == MouseButton.Left)
 			{
 				if (mouseEvent.Pressed) //check if we're dragging the map
 				{
@@ -253,6 +257,7 @@ public partial class SolarSystemView : Node2D
 
 					ZoomCamOffset(false);
 
+					RecalculateDistanceIndicator();
 					OnUpdateSprites("");
 				}
 			}
@@ -265,6 +270,7 @@ public partial class SolarSystemView : Node2D
 
 					ZoomCamOffset(true);
 
+					RecalculateDistanceIndicator();
 					OnUpdateSprites("");
 				}
 			}
@@ -292,16 +298,32 @@ public partial class SolarSystemView : Node2D
 		double xOffset = mouseX - viewportCenter.X - (mouseX - viewportCenter.X) * zoomSpeed;
 		double yOffset = mouseY - viewportCenter.Y - (mouseY - viewportCenter.Y) * zoomSpeed;
 
-		if(isZoomIn)
+		if (isZoomIn)
 		{
-			var newPos = new Vector2(Position.X + (float)-xOffset, Position.Y + (float)-yOffset); 
+			var newPos = new Vector2(Position.X + (float)-xOffset, Position.Y + (float)-yOffset);
 			Position = newPos;
 		}
 		else
 		{
 			var newPos = new Vector2(Position.X + (float)+xOffset, Position.Y + (float)+yOffset);
 			Position = newPos;
-		}		
+		}
+	}
+
+	private void RecalculateDistanceIndicator()
+	{
+		Label distLabel = distanceIndicator.GetNode<Label>("DistanceLabel");
+		var points = distanceIndicator.Points;
+		double pointLength = points[1].X - points[0].X;
+		ulong distanceInMeters = (ulong)pointLength * currentZoomLevel;
+		string distText = "";
+
+		double distInAU = Math.Round((double)(distanceInMeters / UniversalConstants.Units.MetersPerAu), 3, MidpointRounding.AwayFromZero);
+		double distInThousandsKM = Math.Round((double)(distanceInMeters / 1000d / 1000d), 1, MidpointRounding.AwayFromZero);
+
+		distText = $"{distInThousandsKM}k km ({distInAU} AU). System scale: 1:{currentZoomLevel}";
+
+		distLabel.Text = distText;
 	}
 }
 

@@ -7,5 +7,15 @@
 
 [node name="CanvasLayer" parent="." instance=ExtResource("2_26ac6")]
 
+[node name="DistanceIndicator" type="Line2D" parent="CanvasLayer"]
+position = Vector2(346, 108)
+points = PackedVector2Array(0, 0, 100, 0)
+width = 4.0
+
+[node name="DistanceLabel" type="Label" parent="CanvasLayer/DistanceIndicator"]
+offset_right = 100.0
+offset_bottom = 23.0
+text = "1 AU"
+
 [node name="SolarSystemView" type="Node2D" parent="."]
 script = ExtResource("3_8juj1")
