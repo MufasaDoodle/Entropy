@@ -1,12 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://wr054008837e"]
+[gd_scene load_steps=12 format=3 uid="uid://wr054008837e"]
 
 [ext_resource type="Texture2D" uid="uid://coqn6sm0tfepa" path="res://Assets/Icons/play-button.svg" id="1_othhy"]
 [ext_resource type="Script" path="res://Assets/Scripts/PauseButton.cs" id="1_p2rb8"]
+[ext_resource type="Texture2D" uid="uid://dciohwm6jffo6" path="res://Assets/Icons/planet.png" id="1_u0htl"]
 [ext_resource type="Script" path="res://Assets/Scripts/DatePanel.cs" id="1_v65ng"]
 [ext_resource type="Texture2D" uid="uid://cb7mtudbi8018" path="res://Assets/Icons/minus.png" id="4_gajxx"]
 [ext_resource type="Script" path="res://Assets/Scripts/SpeedControls.cs" id="4_gl1ce"]
 [ext_resource type="Texture2D" uid="uid://bgud775h6a4y3" path="res://Assets/Icons/plus-symbol-button.png" id="5_30dlf"]
 [ext_resource type="Script" path="res://Assets/Scripts/SystemButtonControls.cs" id="7_uku6s"]
+[ext_resource type="PackedScene" uid="uid://d0cgu0na5l8tn" path="res://Assets/Prefabs/systemInfoView.tscn" id="9_e2xe8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_kkath"]
 font_size = 38
@@ -22,16 +24,60 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="IconsBarPanel" type="Panel" parent="Control"]
+[node name="BarPanel" type="Panel" parent="Control"]
 layout_mode = 0
 offset_right = 1580.0
 offset_bottom = 100.0
 
-[node name="ColorRect" type="ColorRect" parent="Control/IconsBarPanel"]
+[node name="ColorRect" type="ColorRect" parent="Control/BarPanel"]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_right = 1580.0
 offset_bottom = 100.0
+
+[node name="Button" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 98.0
+offset_bottom = 96.0
+
+[node name="Button2" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 103.0
+offset_top = 4.0
+offset_right = 195.0
+offset_bottom = 96.0
+
+[node name="Button3" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 4.0
+offset_right = 292.0
+offset_bottom = 96.0
+
+[node name="Button4" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 297.0
+offset_top = 4.0
+offset_right = 389.0
+offset_bottom = 96.0
+
+[node name="Button5" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 393.0
+offset_top = 4.0
+offset_right = 485.0
+offset_bottom = 96.0
+
+[node name="SystemViewButton" type="Button" parent="Control/BarPanel"]
+layout_mode = 0
+offset_left = 490.0
+offset_top = 4.0
+offset_right = 582.0
+offset_bottom = 96.0
+icon = ExtResource("1_u0htl")
+expand_icon = true
 
 [node name="TimePanels" type="Control" parent="Control"]
 layout_mode = 1
@@ -167,6 +213,10 @@ offset_right = 258.0
 offset_bottom = 1034.0
 text = "next"
 
+[node name="Window" parent="Control" instance=ExtResource("9_e2xe8")]
+visible = false
+
+[connection signal="pressed" from="Control/BarPanel/SystemViewButton" to="Control/Window" method="OpenSysView"]
 [connection signal="pressed" from="Control/TimePanels/PausePanel/PauseButton" to="Control/TimePanels/PausePanel/PauseButton" method="OnPauseButtonPressed"]
 [connection signal="pressed" from="Control/TimePanels/SpeedPanel/MinusButton" to="Control/TimePanels/SpeedPanel" method="OnDecreaseSpeedPressed"]
 [connection signal="pressed" from="Control/TimePanels/SpeedPanel/PlusButton" to="Control/TimePanels/SpeedPanel" method="OnIncreaseSpeedPressed"]

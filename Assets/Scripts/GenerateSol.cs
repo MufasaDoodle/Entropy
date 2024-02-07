@@ -49,7 +49,8 @@ public static class GenerateSol
 			Radius = 1188.3 * 1000,
 			BodyName = "Pluto",
 			InitAngle = 2.63545f,
-			GraphicsName = "pluto.png"
+			GraphicsName = "pluto.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return pluto;
@@ -69,7 +70,8 @@ public static class GenerateSol
 			Radius = 24622 * 1000,
 			BodyName = "Neptune",
 			InitAngle = 1.62316f,
-			GraphicsName = "neptune.png"
+			GraphicsName = "neptune.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return neptune;
@@ -89,7 +91,8 @@ public static class GenerateSol
 			Radius = 25362 * 1000,
 			BodyName = "Uranus",
 			InitAngle = 0.663225f,
-			GraphicsName = "uranus.png"
+			GraphicsName = "uranus.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return uranus;
@@ -109,7 +112,8 @@ public static class GenerateSol
 			Radius = 58232 * 1000,
 			BodyName = "Saturn",
 			InitAngle = 1.95040544f,
-			GraphicsName = "saturn.png"
+			GraphicsName = "saturn.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return saturn;
@@ -129,7 +133,8 @@ public static class GenerateSol
 			Radius = 69911 * 1000,
 			BodyName = "Jupiter",
 			InitAngle = 0.7243116f,
-			GraphicsName = "jupiter.png"
+			GraphicsName = "jupiter.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return jupiter;
@@ -149,7 +154,8 @@ public static class GenerateSol
 			Radius = 469.7d * 1000d,
 			BodyName = "Ceres",
 			InitAngle = 3.429572f,
-			GraphicsName = "ceres.png"
+			GraphicsName = "ceres.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return ceres;
@@ -169,7 +175,8 @@ public static class GenerateSol
 			Radius = 3389.5 * 1000,
 			BodyName = "Mars",
 			InitAngle = 3.01942f,
-			GraphicsName = "mars.png"
+			GraphicsName = "mars.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return mars;
@@ -189,7 +196,8 @@ public static class GenerateSol
 			Radius = 6371 * 1000,
 			BodyName = "Earth",
 			InitAngle = 5.51524f,
-			GraphicsName = "earth.png"
+			GraphicsName = "earth.png",
+			Guid = Guid.NewGuid()
 		};
 
 		Planet luna = new Planet
@@ -204,7 +212,8 @@ public static class GenerateSol
 			Radius = 1737.4 * 1000,
 			BodyName = "Luna",
 			InitAngle = 3.429572f,
-			GraphicsName = "luna.png"
+			GraphicsName = "luna.png",
+			Guid = Guid.NewGuid()
 		};
 		earth.AddChild(luna);
 
@@ -225,7 +234,8 @@ public static class GenerateSol
 			Radius = 6051.8 * 1000,
 			BodyName = "Venus",
 			InitAngle = 3.6564648f,
-			GraphicsName = "venus.png"
+			GraphicsName = "venus.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return venus;
@@ -245,7 +255,8 @@ public static class GenerateSol
 			Radius = 2439 * 1000,
 			BodyName = "Mercury",
 			InitAngle = 3.29867f,
-			GraphicsName = "mercury.png"
+			GraphicsName = "mercury.png",
+			Guid = Guid.NewGuid()
 		};
 
 		return mercury;
@@ -260,8 +271,15 @@ public static class GenerateSol
 			BodyName = "Sol",
 			Luminosity = 1,
 			OrbitalPeriod = 1,
-			innerZone_m = new MinMaxStruct { Min = 0.1, Max = 0.9},
-			outerZone_m = new MinMaxStruct { Min = 1.88679, Max = 40}
+			innerZone_m = new MinMaxStruct { Min = 0.1, Max = 0.9 },
+			outerZone_m = new MinMaxStruct { Min = 1.88679, Max = 40 },
+			Guid = Guid.NewGuid(),
+			SpectralSubDivision = 2,
+			LuminosityClass = LuminosityClass.V,
+			SpectralType = SpectralType.G,
+			StarClass = $"{SpectralType.G}2-{LuminosityClass.V}",
+			Age = 4603000000,
+			Temperature = 5600
 		};
 
 		return sol;

@@ -16,7 +16,7 @@ public partial class SolarSystemView : Node2D
 		sunTex = GD.Load<Texture2D>("res://Assets/Icons/sun.png");
 		distanceIndicator = GetNode<Line2D>("../CanvasLayer/DistanceIndicator");
 		RecalculateDistanceIndicator();
-		orbitalToNodeMap = new Dictionary<Orbital, Node2D>();
+		OrbitalToNodeMap = new Dictionary<Orbital, Node2D>();
 
 		ShowSolarSystem(0);
 	}
@@ -28,7 +28,7 @@ public partial class SolarSystemView : Node2D
 			DoDrag();
 		}
 
-		if (solarSystem != null)
+		if (SolarSystem != null)
 		{
 			//if we ever want to force a UI update of the solar system we can un-comment the below line
 			//UpdateSprites(solarSystem.Star);
@@ -40,7 +40,7 @@ public partial class SolarSystemView : Node2D
 	/// </summary>
 	public static SolarSystemView Instance;
 
-	SolarSystem solarSystem;
+	public SolarSystem SolarSystem { get; private set; }
 
 	// CLASS TEMPORARY FIELDS
 	bool isDragging = false;
@@ -61,7 +61,7 @@ public partial class SolarSystemView : Node2D
 	/// <summary>
 	/// Dictionary mapping orbital model objects to their in-game Godot object counterparts
 	/// </summary>
-	Dictionary<Orbital, Node2D> orbitalToNodeMap;
+	public Dictionary<Orbital, Node2D> OrbitalToNodeMap { get; private set; }
 
 	/// <summary>
 	/// Loads the next solar system in order they were created
@@ -69,7 +69,7 @@ public partial class SolarSystemView : Node2D
 	public void NextSystem()
 	{
 		int nextID = currentID + 1;
-		if (nextID < GameManager.Instance.galaxy.SolarSystems.Count)
+		if (nextID < GameManager.Instance.Galaxy.SolarSystems.Count)
 		{
 			ShowSolarSystem(nextID);
 		}
@@ -97,11 +97,11 @@ public partial class SolarSystemView : Node2D
 		//use the orbitalToNode dictionary to loop through and remove all old graphics
 		//in order to not mix solar system graphics
 
-		if (orbitalToNodeMap != null) //might be null on first instantiation
+		if (OrbitalToNodeMap != null) //might be null on first instantiation
 		{
 			List<Node2D> bodies = new List<Node2D>();
 
-			foreach (var pair in orbitalToNodeMap)
+			foreach (var pair in OrbitalToNodeMap)
 			{
 				bodies.Add(pair.Value);
 			}
@@ -111,15 +111,15 @@ public partial class SolarSystemView : Node2D
 
 			bodies.Clear();
 
-			orbitalToNodeMap.Clear(); //remove the Orbital references
+			OrbitalToNodeMap.Clear(); //remove the Orbital references
 		}
 
-		solarSystem = GameManager.Instance.galaxy.SolarSystems[solarSystemID]; //retrieve the solar system to display at given ID
+		SolarSystem = GameManager.Instance.Galaxy.SolarSystems[solarSystemID]; //retrieve the solar system to display at given ID
 
 		//Create an in-game object with a sprite for the star of the chosen solar system
 		//then recursively go through each child of the star, and each child's children
 		//so every body gets an object
-		CreateNodesForOrbital(this, solarSystem.Star);
+		CreateNodesForOrbital(this, SolarSystem.Star);
 	}
 
 	/// <summary>
@@ -130,7 +130,7 @@ public partial class SolarSystemView : Node2D
 	void CreateNodesForOrbital(Node2D parentNode, Orbital o)
 	{
 		var instance = planetScene.Instantiate<Node2D>(); //instantiate planet based on scene
-		orbitalToNodeMap[o] = instance; //map to orbital in dictionary
+		OrbitalToNodeMap[o] = instance; //map to orbital in dictionary
 
 		parentNode.AddChild(instance);
 
@@ -144,7 +144,7 @@ public partial class SolarSystemView : Node2D
 			var windowSize = DisplayServer.WindowGetSize();
 			Vector2 pos = new Vector2(windowSize.X / 2f, windowSize.Y / 2f); //middle of screen
 			instance.Position = pos; //set star's position to middle of screen
-			spriteNode.Texture = sunTex;			
+			spriteNode.Texture = sunTex;
 			var orbitCircleNode = instance.GetNode<OrbitCircle>("OrbitCircle");
 			orbitCircleNode.isStar = true; //this ensures that stars don't have orbital circles drawn
 			instance.Name = o.BodyName;
@@ -196,14 +196,14 @@ public partial class SolarSystemView : Node2D
 
 	public void OnUpdateSprites(string date)
 	{
-		UpdateSprites(solarSystem.Star);
+		UpdateSprites(SolarSystem.Star);
 	}
 
 	void UpdateSprites(Orbital o)
 	{
 		if (o.GetType() != typeof(Star)) //if this isn't a star. We don't need to update star sprites
 		{
-			Node2D node = orbitalToNodeMap[o];
+			Node2D node = OrbitalToNodeMap[o];
 			node.Position = o.Position / currentZoomLevel; // set our position based on the scaling level and in relation to parent body's position
 			DrawPlanetDot(o, node);
 			DrawOrbitCircle(o, node, (Node2D)node.GetParent()); //redraw orbital circle
@@ -211,7 +211,7 @@ public partial class SolarSystemView : Node2D
 		}
 		else
 		{
-			Node2D node = orbitalToNodeMap[o];
+			Node2D node = OrbitalToNodeMap[o];
 			CheckIfDisableSprites(node, o);
 		}
 
@@ -228,10 +228,10 @@ public partial class SolarSystemView : Node2D
 
 		Color color;
 
-        if (o.GetType() == typeof(Planet))
-        {
-			var p = (Planet) o;
-            if (p.BodyType == BodyType.Moon)
+		if (o.GetType() == typeof(Planet))
+		{
+			var p = (Planet)o;
+			if (p.BodyType == BodyType.Moon)
 			{
 				color = Colors.Yellow;
 			}
@@ -239,11 +239,11 @@ public partial class SolarSystemView : Node2D
 			{
 				color = Colors.Blue;
 			}
-        }
+		}
 		else
 		{
 			color = Colors.Orange;
-		}        
+		}
 
 		planetDotNode.DrawPlanetDot(color);
 	}
@@ -371,8 +371,8 @@ public partial class SolarSystemView : Node2D
 				//disable sprites
 				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
 				spriteNode.Visible = false;
-				
-				if(((Planet)o).BodyType == BodyType.Moon)
+
+				if (((Planet)o).BodyType == BodyType.Moon)
 				{
 					var labelNode = node.GetNode<Label>("BodyNameLabel");
 					labelNode.Visible = false;
@@ -405,6 +405,6 @@ public partial class SolarSystemView : Node2D
 				var spriteNode = node.GetNode<Sprite2D>("Sprite2D");
 				spriteNode.Visible = true;
 			}
-		}		
+		}
 	}
 }

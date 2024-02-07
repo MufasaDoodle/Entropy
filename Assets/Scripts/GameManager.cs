@@ -9,14 +9,14 @@ public partial class GameManager : Node
 	public override void _EnterTree()
 	{
 		Instance = this;
-		galaxy = new Galaxy();
-		galaxy.Generate(3);
+		Galaxy = new Galaxy();
+		Galaxy.Generate(3);
 
 		base._EnterTree(); 
 	}
 
 	//TODO: make into property with proper accessibility
-	public Galaxy galaxy;
+	public Galaxy Galaxy { get; private set; }
 
 	//seconds since game start
 	//used to calculate precise locations of orbital bodies 
@@ -30,7 +30,7 @@ public partial class GameManager : Node
 	{
 		galacticTime = galacticTime + (uint)numSeconds;
 
-		galaxy.Update(galacticTime);
+		Galaxy.Update(galacticTime);
 	}
 
 	private double timePerTick;

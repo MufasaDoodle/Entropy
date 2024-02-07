@@ -187,6 +187,7 @@ public class SolarSystem
 			{
 				var minMax = BodyGenParameters.SystemBodyMassByType[planet.BodyType];
 				massMultiplier *= Mathf.Lerp(minMax.Min, minMax.Max, Mathf.Pow(rng.Randf(), 3));
+				minMax = BodyGenParameters.SystemBodyDensityByType[planet.BodyType];
 				density = Mathf.Lerp(minMax.Min, minMax.Max, rng.Randf());
 			}
 			double volumeInCm3 = massMultiplier / density;
@@ -195,12 +196,13 @@ public class SolarSystem
 			double volume = volumeInCm3 * 1.0e-15;
 
 			double radius = Mathf.Pow((3 * massMultiplier) / (4 * Mathf.Pi * (density / 1000)), 0.3333333333);
-			radius = radius / 1000 / 100; //convert from cm to km
+			radius = radius / 100; //convert from cm to m
 
 			planet.Mass = massMultiplier;
 			planet.Radius = radius;
 			planet.Density = density;
 			planet.Volume = volume;
+			planet.Guid = Guid.NewGuid();
 
 			planets.Add(planet);
 			numBodies--;
@@ -411,6 +413,7 @@ public class SolarSystem
 			double massMultiplier = 1;
 
 			massMultiplier *= Mathf.Lerp(moonMassMinMax.Min, moonMassMinMax.Max, Mathf.Pow(rng.Randf(), 3));
+			moonMassMinMax = BodyGenParameters.SystemBodyDensityByType[newMoon.BodyType];
 			double density = Mathf.Lerp(moonMassMinMax.Min, moonMassMinMax.Max, rng.Randf());
 
 			double volumeInCm3 = massMultiplier / density;
@@ -419,12 +422,13 @@ public class SolarSystem
 			double volume = volumeInCm3 * 1.0e-15;
 
 			double radius = Mathf.Pow((3 * massMultiplier) / (4 * Mathf.Pi * (density / 1000)), 0.3333333333);
-			radius = radius / 1000 / 100; //convert from cm to km
+			radius = radius / 100; //convert from cm to m
 
 			newMoon.Mass = massMultiplier;
 			newMoon.Radius = radius;
 			newMoon.Density = density;
 			newMoon.Volume = volume;
+			newMoon.Guid = Guid.NewGuid();
 
 			moons.Add(newMoon);
 			numMoons--;

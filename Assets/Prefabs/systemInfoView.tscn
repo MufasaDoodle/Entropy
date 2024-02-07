@@ -1,0 +1,248 @@
+[gd_scene load_steps=8 format=3 uid="uid://d0cgu0na5l8tn"]
+
+[ext_resource type="PackedScene" uid="uid://7rl72mchv5ij" path="res://Assets/Prefabs/UIComponents/planet_row.tscn" id="1_6nods"]
+[ext_resource type="Script" path="res://Assets/Scripts/SysInfoPlanetViewer.cs" id="1_cyiq2"]
+[ext_resource type="Script" path="res://Assets/Scripts/SysStarInfo.cs" id="1_kdcsl"]
+[ext_resource type="Script" path="res://Assets/Scripts/SystemInfoViewWindow.cs" id="1_uec1x"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6qc0d"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_fb8os"]
+font_size = 11
+
+[sub_resource type="LabelSettings" id="LabelSettings_c76hd"]
+font_size = 11
+
+[node name="Window" type="Window"]
+title = "System Info"
+initial_position = 1
+size = Vector2i(800, 800)
+unresizable = true
+content_scale_mode = 2
+content_scale_aspect = 1
+script = ExtResource("1_uec1x")
+
+[node name="Star Info" type="Panel" parent="."]
+offset_right = 800.0
+offset_bottom = 80.0
+script = ExtResource("1_kdcsl")
+
+[node name="SysSelectLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 5.0
+offset_right = 115.0
+offset_bottom = 23.0
+text = "Select system:"
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="SystemSelectDropdown" type="OptionButton" parent="Star Info"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 23.0
+offset_right = 155.0
+offset_bottom = 54.0
+text_overrun_behavior = 1
+expand_icon = true
+item_count = 3
+selected = 0
+fit_to_longest_item = false
+popup/item_0/text = "asd1"
+popup/item_0/id = 0
+popup/item_1/text = "asd2"
+popup/item_1/id = 1
+popup/item_2/text = "asd3"
+popup/item_2/id = 2
+
+[node name="ClassLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 200.0
+offset_right = 310.0
+offset_bottom = 23.0
+text = "Spectral class: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="AgeLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 23.0
+offset_right = 313.0
+offset_bottom = 46.0
+text = "Age: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="TempLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 46.0
+offset_right = 313.0
+offset_bottom = 69.0
+text = "Temperature: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="LuminLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 500.0
+offset_right = 613.0
+offset_bottom = 23.0
+text = "Luminosity: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="MassLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 23.0
+offset_right = 613.0
+offset_bottom = 46.0
+text = "Mass: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="DiameterLabel" type="Label" parent="Star Info"]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 46.0
+offset_right = 613.0
+offset_bottom = 69.0
+text = "Diameter: "
+label_settings = SubResource("LabelSettings_6qc0d")
+
+[node name="Planets Panel" type="Panel" parent="."]
+offset_top = 85.0
+offset_right = 800.0
+offset_bottom = 735.0
+script = ExtResource("1_cyiq2")
+
+[node name="Label" type="Label" parent="Planets Panel"]
+layout_mode = 0
+offset_left = 5.0
+offset_right = 114.0
+offset_bottom = 23.0
+text = "Select sorting:"
+
+[node name="SortSelect" type="OptionButton" parent="Planets Panel"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 30.0
+offset_right = 125.0
+offset_bottom = 60.0
+item_count = 8
+selected = 5
+popup/item_0/text = "Name"
+popup/item_0/id = 0
+popup/item_1/text = "BodyType"
+popup/item_1/id = 1
+popup/item_2/text = "Population"
+popup/item_2/id = 2
+popup/item_3/text = "ColonyCost"
+popup/item_3/id = 3
+popup/item_4/text = "Diameter"
+popup/item_4/id = 4
+popup/item_5/text = "Distance"
+popup/item_5/id = 5
+popup/item_6/text = "Period"
+popup/item_6/id = 6
+popup/item_7/text = "Mass"
+popup/item_7/id = 7
+
+[node name="PlanetViewer" type="ScrollContainer" parent="Planets Panel"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 70.0
+offset_right = 800.0
+offset_bottom = 650.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Planets Panel/PlanetViewer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlanetTable" type="HBoxContainer" parent="Planets Panel/PlanetViewer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Name of the body"
+mouse_filter = 0
+text = "Name"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="BodyType" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The type of celestial body"
+mouse_filter = 0
+text = "BodyType"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="Population" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The current population of this body"
+mouse_filter = 0
+text = "Population"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="ColonyCost" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The cost for colonists to live on this body"
+mouse_filter = 0
+text = "ColonyCost"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="Diameter" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The diameter of this body"
+mouse_filter = 0
+text = "Diameter"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="Orbital Distance" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The distance to primary body"
+mouse_filter = 0
+text = "Distance"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="Orbital Period" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The time to complete an orbit around primary body"
+mouse_filter = 0
+text = "Period"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="Mass" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The mass of this body"
+mouse_filter = 0
+text = "Mass"
+label_settings = SubResource("LabelSettings_fb8os")
+vertical_alignment = 1
+
+[node name="ViewLabel" type="Label" parent="Planets Panel/PlanetViewer/VBoxContainer/PlanetTable"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 0
+label_settings = SubResource("LabelSettings_c76hd")
+
+[node name="PlanetRow" parent="Planets Panel/PlanetViewer/VBoxContainer" instance=ExtResource("1_6nods")]
+layout_mode = 2
+
+[node name="Buttons Panel" type="Panel" parent="."]
+offset_top = 740.0
+offset_right = 800.0
+offset_bottom = 800.0
+
+[connection signal="close_requested" from="." to="." method="CloseRequested"]
+[connection signal="item_selected" from="Star Info/SystemSelectDropdown" to="Star Info" method="OnSystemSelectChanged"]
+[connection signal="item_selected" from="Planets Panel/SortSelect" to="Planets Panel" method="OnSortSelectChanged"]

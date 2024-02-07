@@ -54,6 +54,8 @@ public partial class Orbital
 
 	public string BodyName {  get; set; }
 
+	public Guid Guid { get; set; }
+
 	
 	/// <summary>
 	/// The body's position relative to the system's star (in meters)
